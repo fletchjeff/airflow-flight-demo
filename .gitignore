@@ -1,6 +1,7 @@
 archive
 data
 .*
+!.github
 R
 source_data
 !.gitignore
@@ -11,3 +12,6 @@ metastore_db*
 spark-warehouse
 penv/
 _archive
+notes.txt
+docker-compose.override.yml
+
