@@ -1,0 +1,13 @@
+archive
+data
+.*
+R
+source_data
+!.gitignore
+*.code-workspace
+_*
+derby.log
+metastore_db*
+spark-warehouse
+penv/
+_archive
