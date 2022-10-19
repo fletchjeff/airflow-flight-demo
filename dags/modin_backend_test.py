@@ -1,7 +1,7 @@
 import json
 
 import pendulum
-#import pandas as pd
+import pandas as pd
 
 
 from airflow.decorators import dag, task
@@ -25,7 +25,7 @@ def xcom_test():
         # )
         # result = pd.read_csv(filename)
         import numpy as np
-        import modin.pandas as pd
+        #import modin.pandas as pd
         #import ray
         #ray.init()
         frame_data = np.random.randint(0, 100, size=(2**10, 4))
