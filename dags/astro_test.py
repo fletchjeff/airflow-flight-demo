@@ -63,7 +63,7 @@ with dag:
         task_id="load_from_github_to_bq",
         input_file=File(
             path="s3://test/smaller.csv",
-            conn_id="s3_conn"
+            conn_id="aws_default"
         )
     )
 
