@@ -1,6 +1,7 @@
 import json
 
 import pendulum
+#import modin.pandas as pd
 import pandas as pd
 
 
@@ -15,19 +16,7 @@ def xcom_test():
 
     @task()
     def read_data():
-        # from airflow.providers.amazon.aws.hooks.s3 import S3Hook
-        # hook    = S3Hook()
-        # key     = "flight_data/2009.csv"
-        # filename = hook.download_file(
-        #         key=key,
-        #         bucket_name="jfletcher-datasets",
-        #         local_path="/tmp"
-        # )
-        # result = pd.read_csv(filename)
         import numpy as np
-        #import modin.pandas as pd
-        #import ray
-        #ray.init()
         frame_data = np.random.randint(0, 100, size=(2**10, 4))
         df = pd.DataFrame(frame_data,columns=list('ABCD'))
         return df

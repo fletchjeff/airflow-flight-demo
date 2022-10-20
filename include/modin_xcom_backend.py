@@ -2,8 +2,8 @@ from typing import Any
 from airflow.models.xcom import BaseXCom
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
-import modin.pandas as pd
-#import pandas as pd
+#import modin.pandas as pd
+import pandas as pd
 import uuid
 
 class ModinXComBackend(BaseXCom):
