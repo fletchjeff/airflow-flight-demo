@@ -1,5 +1,9 @@
 boto3
 beautifulsoup4
-apache-airflow-providers-amazon
-#modin[ray]
-astro-sdk-python[amazon,snowflake,postgres]==1.2.0
+#apache-airflow-providers-amazon
+astro-sdk-python[amazon,snowflake,postgres]==1.2.1
+minio
+xgboost
+scikit-learn
+mlflow
+matplotlib

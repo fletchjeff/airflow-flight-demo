@@ -5,20 +5,70 @@ services:
     networks:
       - airflow
     command: server /data --console-address ":9001"
-    #streamlit run include/code/streamlit_app.py
-    # volumes:
-    #   - ${PWD}:/xray
     ports:
       - 9000:9000
       - 9001:9001
-    # working_dir: /xray
-  jupyter:
-    image: tensorflow/tensorflow:latest-jupyter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+    restart: always
+  local_db:
+    image: postgres
+    networks:
+      - airflow    
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      PGPORT: 5433
+    ports:
+      - 5433:5433
+    extra_hosts:
+      - "host.docker.internal:host-gateway"      
+  pgadmin:
+    image: dpage/pgadmin4
     networks:
       - airflow
-    volumes:
-      - ${PWD}/:/notebook/
-      # - ${PWD}/xray/data/:/data/
     ports:
-      - 8888:8888
-    command: bash -c "source /etc/bash.bashrc && jupyter notebook --notebook-dir=/notebook --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
+      - 5050:80
+    environment:
+    - PGADMIN_DEFAULT_EMAIL=name@example.com
+    - PGADMIN_DEFAULT_PASSWORD=admin
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+  mlflow:
+    image: fletchjeffastro/astro_flight_demo:0.0.1
+    networks:
+      - airflow
+    command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:////data/mlflow_backend.db --default-artifact-root /data
+    volumes:
+      - ${PWD}/include/mlflow:/data    
+    ports:
+      - 5000:5000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always       
+  # jupyter:
+  #   image: tensorflow/tensorflow:latest-jupyter
+  #   networks:
+  #     - airflow
+  #   volumes:
+  #     - ${PWD}/:/notebook/
+  #   ports:
+  #     - 8888:8888
+  #   command: bash -c "source /etc/bash.bashrc && jupyter notebook --notebook-dir=/notebook --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   restart: always     
+  scheduler:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+  webserver:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  triggerer:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  # postgres:
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"           
