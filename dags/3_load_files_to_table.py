@@ -7,9 +7,11 @@ from astro.files import get_file_list
 from astro.files import File
 from pandas import DataFrame
 from airflow.decorators import task
+import os
 
-FILE_CONN_ID = "minio_default"
-DB_CONN_ID = "mypsql"
+DB_CONN_ID = os.environ["DB_CONN_ID"]
+FILE_CONN_ID = os.environ["FILE_CONN_ID"]
+
 
 column_definitions = [
                 sqlalchemy.Column("YEAR", sqlalchemy.Numeric),

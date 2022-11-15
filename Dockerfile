@@ -12,11 +12,27 @@ FROM quay.io/astronomer/astro-runtime:6.0.3
 
 # COPY tmp_sdk_fix/s3.py /usr/local/lib/python3.9/site-packages/astro/files/locations/amazon/s3.py
 
+# Local dev ENV
+ENV DB_CONN_ID="mypsql"
+ENV FILE_CONN_ID="minio_default"
+ENV BUCKET_NAME="cosmicenergy-ml-public-datasets"
+#ENV BUCKET_NAME="jfletcher-datasets"
+
+# Prod dev ENV
+#ENV DB_CONN_ID="jf-snowflake"
+#ENV FILE_CONN_ID="jf-xcom"
+
+
 ENV AIRFLOW__CORE__XCOM_BACKEND=astro.custom_backend.astro_custom_backend.AstroCustomXcomBackend
 
 # Local dev ENV
-ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://local-xcom' 
+ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://local-xcom'
 ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='minio_default'
+
+# Prod dev ENV
+#ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://jf-xcom'
+#ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='jf-xcom'
+
 
 #ENV AIRFLOW__ASTRO_SDK__AUTO_ADD_INLETS_OUTLETS = "false"
 

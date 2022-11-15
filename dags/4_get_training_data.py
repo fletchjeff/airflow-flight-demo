@@ -18,9 +18,10 @@ import scipy
 from joblib import dump, load
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 import mlflow
+import os
 
-FILE_CONN_ID = "minio_default"
-DB_CONN_ID = "mypsql"
+DB_CONN_ID = os.environ["DB_CONN_ID"]
+FILE_CONN_ID = os.environ["FILE_CONN_ID"]
 
 flight_data_table_dataset = Dataset('postgresql://host.docker.internal/postgres/tmp_astro.flight_data')     
 model_training_data_latest_dataset =  Dataset('postgresql://host.docker.internal/postgres/tmp_astro.model_training_data_latest')  

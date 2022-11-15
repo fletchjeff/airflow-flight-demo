@@ -8,9 +8,10 @@ import pandas as pd
 from smart_open import open
 import boto3
 from joblib import load
+import os
 
-FILE_CONN_ID = "minio_default"
-DB_CONN_ID = "mypsql"
+DB_CONN_ID = os.environ["DB_CONN_ID"]
+FILE_CONN_ID = os.environ["FILE_CONN_ID"]
 
 dag = DAG(
     dag_id="6_deploy_model",

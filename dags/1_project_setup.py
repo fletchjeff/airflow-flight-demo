@@ -4,8 +4,10 @@ from airflow.operators.bash import BashOperator
 from airflow.models import DAG
 from airflow.decorators import task
 from astro import sql as aql
+import os
 
-DB_CONN_ID = "mypsql"
+DB_CONN_ID = os.environ["DB_CONN_ID"]
+#BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 dag = DAG(
     dag_id="1_project_setup",
@@ -24,9 +26,7 @@ with dag:
         if not client.bucket_exists("cosmicenergy-ml-public-datasets"):
             client.make_bucket("cosmicenergy-ml-public-datasets")
             
-
     create_minio_buckets()
-
 
     @aql.run_raw_sql
     def create_schema():
