@@ -1,9 +1,11 @@
 boto3
 beautifulsoup4
-#apache-airflow-providers-amazon
-astro-sdk-python[amazon,google,snowflake,postgres]==1.2.1
+apache-airflow-providers-amazon
+apache-airflow-providers-google
+astro-sdk-python[amazon,google,postgres]
 minio
 xgboost
+#mlflow
 scikit-learn
-mlflow
-matplotlib
+#scipy
+mlflow-skinny

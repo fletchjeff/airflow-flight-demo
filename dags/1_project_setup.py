@@ -1,13 +1,19 @@
 from datetime import datetime
 from airflow.operators.bash import BashOperator
-
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.cloud.exceptions import Conflict
+from airflow.hooks.base import BaseHook
 from airflow.models import DAG
 from airflow.decorators import task
 from astro import sql as aql
 import os
 
 DB_CONN_ID = os.environ["DB_CONN_ID"]
-#BUCKET_NAME = os.environ["BUCKET_NAME"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]
+FILE_CONN_ID = os.environ["FILE_CONN_ID"]
+XCOM_BUCKET_NAME = os.environ["XCOM_BUCKET_NAME"]
+
 
 dag = DAG(
     dag_id="1_project_setup",
@@ -18,15 +24,25 @@ dag = DAG(
 
 with dag:
     @task
-    def create_minio_buckets():
-        from minio import Minio
-        client = Minio("host.docker.internal:9000", "minioadmin", "minioadmin",secure=False)
-        if not client.bucket_exists("local-xcom"):
-            client.make_bucket("local-xcom")
-        if not client.bucket_exists("cosmicenergy-ml-public-datasets"):
-            client.make_bucket("cosmicenergy-ml-public-datasets")
+    def create_buckets():
+        if BaseHook().get_connections(FILE_CONN_ID)[0].conn_type == "aws":
+            hook = S3Hook(FILE_CONN_ID)
+            if not hook.check_for_bucket(BUCKET_NAME):
+                hook.create_bucket(bucket_name=BUCKET_NAME)
+            if not hook.check_for_bucket(XCOM_BUCKET_NAME):
+                hook.create_bucket(bucket_name=XCOM_BUCKET_NAME)     #"jf-xcom") #FILE_CONN_ID)
+        elif BaseHook().get_connections(FILE_CONN_ID)[0].conn_type == "google_cloud_platform":
+            hook = GCSHook(FILE_CONN_ID)
+            try:
+                hook.create_bucket(bucket_name=BUCKET_NAME)
+            except Conflict as e:
+                print(e)
+            try:
+                hook.create_bucket(bucket_name=XCOM_BUCKET_NAME)
+            except Conflict as e:
+                print(e)
             
-    create_minio_buckets()
+    create_buckets()
 
     @aql.run_raw_sql
     def create_schema():

@@ -74,7 +74,6 @@ with dag:
 
         categorical_cols = ['MONTH', 'DAYOFMONTH', 'DAYOFWEEK', 'REPORTING_AIRLINE', 'TAIL_NUMBER','ORIGIN', 'ORIGINCITYNAME', 'ORIGINSTATE', 'DEST', 'DESTCITYNAME','DESTSTATE', 'CRSDEPTIME', 'CRSARRTIME']
 
-
         bucketname = 'cosmicenergy-ml-public-datasets'
 
         mlflow.set_tracking_uri("http://host.docker.internal:5000")
