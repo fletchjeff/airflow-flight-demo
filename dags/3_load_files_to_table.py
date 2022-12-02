@@ -196,4 +196,4 @@ with dag:
     convert_file_list.expand(file_list_in = unprocessed_files) >> load_new_files >> update_processed_file_list.expand(file_name = unprocessed_files) >> downstream_trigger()
 
     #TODO - why does this break?
-    aql.cleanup()
+    #aql.cleanup()
