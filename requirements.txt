@@ -5,7 +5,8 @@ apache-airflow-providers-google
 astro-sdk-python[amazon,google,postgres]
 minio
 xgboost
-#mlflow
+#mlflow==1.30
 scikit-learn
 #scipy
 mlflow-skinny
+#==1.30

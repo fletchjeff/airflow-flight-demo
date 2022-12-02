@@ -8,4 +8,4 @@ notes.txt
 .env
 .dockerignore
 *.DS_Store*
-include/mlflow/
+include/mlflow/mlflow_backend.db

@@ -37,7 +37,7 @@ services:
       - "host.docker.internal:host-gateway"
     restart: always
   mlflow:
-    image: fletchjeffastro/astro_flight_demo:0.0.1
+    image: fletchjeffastro/astro_flight_demo:0.0.2
     networks:
       - airflow
     command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:////data/mlflow_backend.db --default-artifact-root /data
