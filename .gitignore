@@ -9,3 +9,5 @@ notes.txt
 .dockerignore
 *.DS_Store*
 include/mlflow/mlflow_backend.db
+notes.txt
+_archive
