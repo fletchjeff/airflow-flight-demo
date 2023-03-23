@@ -12,7 +12,7 @@ import os
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
-XCOM_BUCKET_NAME = os.environ["XCOM_BUCKET_NAME"]
+#XCOM_BUCKET_NAME = os.environ["XCOM_BUCKET_NAME"]
 
 
 dag = DAG(
@@ -29,18 +29,6 @@ with dag:
             hook = S3Hook(FILE_CONN_ID)
             if not hook.check_for_bucket(BUCKET_NAME):
                 hook.create_bucket(bucket_name=BUCKET_NAME)
-            if not hook.check_for_bucket(XCOM_BUCKET_NAME):
-                hook.create_bucket(bucket_name=XCOM_BUCKET_NAME)     #"jf-xcom") #FILE_CONN_ID)
-        elif BaseHook().get_connections(FILE_CONN_ID)[0].conn_type == "google_cloud_platform":
-            hook = GCSHook(FILE_CONN_ID)
-            try:
-                hook.create_bucket(bucket_name=BUCKET_NAME)
-            except Conflict as e:
-                print(e)
-            try:
-                hook.create_bucket(bucket_name=XCOM_BUCKET_NAME)
-            except Conflict as e:
-                print(e)
             
     create_buckets()
 
@@ -175,13 +163,5 @@ with dag:
                 "UNAMED" character varying COLLATE pg_catalog."default"
             ) 
         """
-
-    delete_mlflow_backend = BashOperator(
-        task_id='delete_mlflow_backend',
-        bash_command='rm /usr/local/airflow/include/mlflow/mlflow_backend.db',
-    )
-
-    #TODO Clean up MLFlow
-    # delete_mlflow_backend
 
     create_schema(conn_id=DB_CONN_ID) >> create_files_processed_table(conn_id=DB_CONN_ID) >> create_flight_data_table(conn_id=DB_CONN_ID)

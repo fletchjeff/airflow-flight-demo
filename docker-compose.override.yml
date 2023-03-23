@@ -48,18 +48,15 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always       
-  # jupyter:
-  #   image: tensorflow/tensorflow:latest-jupyter
-  #   networks:
-  #     - airflow
-  #   volumes:
-  #     - ${PWD}/:/notebook/
-  #   ports:
-  #     - 8888:8888
-  #   command: bash -c "source /etc/bash.bashrc && jupyter notebook --notebook-dir=/notebook --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"
-  #   restart: always     
+  streamlit:
+    image: fletchjeffastro/flight-streamlit:0.1.0
+    networks:
+      - airflow
+    ports:
+      - 8501:8501
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+    restart: always
   scheduler:
     extra_hosts:
       - "host.docker.internal:host-gateway"  
@@ -69,6 +66,3 @@ services:
   triggerer:
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  # postgres:
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"           

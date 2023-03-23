@@ -11,6 +11,7 @@ import os
 
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 
 column_definitions = [
@@ -126,7 +127,7 @@ column_definitions = [
                 Column("UNAMED", String)
             ]
 
-flight_data_dataset = Dataset('s3://cosmicenergy-ml-public-datasets/flight_data')
+flight_data_dataset = Dataset(f's3://{BUCKET_NAME}/flight_data')
 flight_data_table_dataset = Dataset('postgresql://host.docker.internal/postgres/tmp_astro.flight_data')
 
 dag = DAG(
@@ -144,7 +145,7 @@ with dag:
         SELECT * FROM tmp_astro.files_processed
         """
 
-    file_list = get_file_list(path="s3://cosmicenergy-ml-public-datasets/flight_data/", conn_id=FILE_CONN_ID)
+    file_list = get_file_list(path=f"s3://{BUCKET_NAME}/flight_data/", conn_id=FILE_CONN_ID)
 
     @aql.dataframe
     def compare_lists(processed_files_list: DataFrame,all_files):

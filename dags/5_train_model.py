@@ -22,6 +22,7 @@ import os
 
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 #datasets
 model_training_data_latest_dataset =  Dataset('postgresql://host.docker.internal/postgres/tmp_astro.model_training_data_latest')  
@@ -74,7 +75,7 @@ with dag:
 
         categorical_cols = ['MONTH', 'DAYOFMONTH', 'DAYOFWEEK', 'REPORTING_AIRLINE', 'TAIL_NUMBER','ORIGIN', 'ORIGINCITYNAME', 'ORIGINSTATE', 'DEST', 'DESTCITYNAME','DESTSTATE', 'CRSDEPTIME', 'CRSARRTIME']
 
-        bucketname = 'cosmicenergy-ml-public-datasets'
+        bucketname = BUCKET_NAME
 
         mlflow.set_tracking_uri("http://host.docker.internal:5000")
         mlflow.set_experiment("train_model")
@@ -148,7 +149,7 @@ with dag:
         mlflow.set_tracking_uri("http://host.docker.internal:5000")
         mlflow.set_experiment("train_model")
         model_path = mlflow.get_run(run_id=run_id).data.params['model_directory']
-        bucketname = 'cosmicenergy-ml-public-datasets'
+        bucketname = BUCKET_NAME
 
         with open (f's3://{bucketname}/models/{model_path}/X_test.npz','rb',transport_params={'client': client}) as f:
             X_test = scipy.sparse.load_npz(f)

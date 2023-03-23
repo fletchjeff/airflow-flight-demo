@@ -12,6 +12,7 @@ import os
 
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 dag = DAG(
     dag_id="6_deploy_model",
@@ -31,7 +32,11 @@ with dag:
     def generate_new_predict_table(flight_table: Table):
         return """
         select "MONTH","DAYOFMONTH","DAYOFWEEK","REPORTING_AIRLINE","TAIL_NUMBER","ORIGIN","ORIGINCITYNAME","ORIGINSTATE","DEST","DESTCITYNAME","DESTSTATE",FLOOR("CRSDEPTIME"/100) AS "CRSDEPTIME",FLOOR("CRSARRTIME"/100) AS "CRSARRTIME","CRSELAPSEDTIME","DISTANCE" 
-        from {{flight_table}} where "MONTH" = extract('month' from current_date) order by random() limit 100;
+        from {{flight_table}} 
+        where "MONTH" = extract('month' from current_date) 
+        and "DAYOFMONTH" = extract('day' from current_date)
+        and "ORIGINCITYNAME" = 'New York, NY'
+        order by random() limit 100;
         """
 
     @task
@@ -50,7 +55,7 @@ with dag:
             aws_access_key_id='minioadmin',
             aws_secret_access_key='minioadmin',
         )
-        bucketname = 'cosmicenergy-ml-public-datasets'
+        bucketname = BUCKET_NAME
         with open (paths[0],'rb',transport_params={'client': client}) as f:
             pipe = load(f)
         with open (paths[1],'rb',transport_params={'client': client}) as f:

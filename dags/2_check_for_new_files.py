@@ -2,8 +2,10 @@ from airflow import DAG, Dataset
 from airflow.decorators import task
 import pendulum
 from datetime import datetime
+import os 
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 
-flight_data_dataset = Dataset('s3://cosmicenergy-ml-public-datasets/flight_data')
+flight_data_dataset = Dataset(f's3://{BUCKET_NAME}/flight_data')
 
 dag = DAG(
     dag_id="2_check_for_new_files",
@@ -25,8 +27,8 @@ with dag:
             verify=False
         )
         s3_list = []
-        if 'Contents' in conn.list_objects_v2(Bucket="cosmicenergy-ml-public-datasets",Prefix='flight_data'):
-            for key in conn.list_objects_v2(Bucket="cosmicenergy-ml-public-datasets",Prefix='flight_data')['Contents']:
+        if 'Contents' in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data'):
+            for key in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data')['Contents']:
                 if (len(key['Key'].split("/")) > 1) and ("On_Time_Reporting" in key['Key'].split("/")[1]):
                     s3_list.append(key['Key'].split("/")[1].split(".")[0])
         return s3_list
@@ -77,14 +79,10 @@ with dag:
             aws_session_token=None,
             config=boto3.session.Config(signature_version='s3v4'),
             verify=False
-        )
-        bucketname = 'cosmicenergy-ml-public-datasets'
-        # key = f'flight_data/{file_name.split(".zip")[0]}.csv.gz'
-        # conn.put_object(Body=gzip.compress(file_bytes),Bucket= bucketname,Key =key)
-            
+        )   
 
         key = f'flight_data/{file_name.split(".zip")[0]}.csv'
-        conn.put_object(Body=file_bytes,Bucket= bucketname,Key =key)
+        conn.put_object(Body=file_bytes,Bucket=BUCKET_NAME,Key =key)
 
         return file_name
 
