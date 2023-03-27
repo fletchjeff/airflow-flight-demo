@@ -47,19 +47,7 @@ services:
       - 5000:5000
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    restart: always       
-  streamlit:
-    image: fletchjeffastro/flight-streamlit:0.1.0
-    networks:
-      - airflow
-    ports:
-      - 8501:8501
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  
-    restart: always
-  scheduler:
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  
+    restart: always 
   webserver:
     extra_hosts:
       - "host.docker.internal:host-gateway"
