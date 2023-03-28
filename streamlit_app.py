@@ -101,4 +101,3 @@ with col1:
         single_flight = fetch_one_row(origin_city)
         prediction_text.write(f"Prediction: **{make_prediction(single_flight,load_latest_model('XGBClassifier'))}**")
         flight_st_df.dataframe(single_flight[['TAIL_NUMBER','ORIGINCITYNAME','DESTCITYNAME','CRSDEPTIME']].T)
-
