@@ -65,6 +65,16 @@ def get_cities_list():
     return_data = sqlio.read_sql_query(query, conn)
     return return_data
 
+import pandas as pd
+blank_flight_data = pd.DataFrame(
+    {
+        'TAIL_NUMBER':['------------------'],
+        'ORIGINCITYNAME':['------------------'],
+        'DESTCITYNAME':['------------------'],
+        'CRSDEPTIME':['------------------']
+    }
+)
+
 st.title('Flight Cancellation Prediction')
 st.subheader(f'For flights on: {datetime.datetime.now().strftime("%d %B")}')
 
@@ -74,10 +84,21 @@ def get_single_flight():
 
 single_flight = get_single_flight()
 
-origin_city = st.selectbox("Pick an origin city",get_cities_list())    
-if st.button("Get New Flight"):
-    single_flight = fetch_one_row(origin_city)      
-st.write(f"Prediction: **{make_prediction(single_flight,load_latest_model('XGBClassifier'))}**")
-st.dataframe(single_flight[['TAIL_NUMBER','ORIGINCITYNAME','DESTCITYNAME','CRSDEPTIME']].T)
+col1, col2 = st.columns([2,1])
 
+with col2:
+    st.write("Flight Details")
+    flight_st_df = st.empty()
+    flight_st_df.dataframe(blank_flight_data.T)
+
+with col1:
+    origin_city = st.selectbox("Pick an origin city",get_cities_list())    
+    prediction_text = st.empty()
+    prediction_text.write("Prediction: ")
+
+    if st.button("Predict New Flight"):
+        prediction_text.write("Calcuating...")
+        single_flight = fetch_one_row(origin_city)
+        prediction_text.write(f"Prediction: **{make_prediction(single_flight,load_latest_model('XGBClassifier'))}**")
+        flight_st_df.dataframe(single_flight[['TAIL_NUMBER','ORIGINCITYNAME','DESTCITYNAME','CRSDEPTIME']].T)
 
