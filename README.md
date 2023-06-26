@@ -65,8 +65,8 @@ Here are the steps to follow to get this project running:
 
    ![setup](images/flight_7.png)
 
-6. ### Run the Streamlit App  
-   The final step is to get Streamlit App running. You will need to install several Python libraries installed, so the easiest is a to create a new virtual Python enviroment and run `pip install streamlit boto3 mlflow-skinny pandas smart-open psycopg2.binary` and from start up the streamlit application by running `streamlit run streamlit_app.py` in a terminal window.
+6. ### View the Streamlit App  
+   The final step is to view the Streamlit App. You can view the app at http://localhost:8501/
 
    ![setup](images/flight_9.png)
 
