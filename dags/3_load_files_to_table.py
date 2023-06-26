@@ -167,7 +167,7 @@ with dag:
             "flight_data",
             conn_id=DB_CONN_ID,
             columns=column_definitions),
-        max_active_tis_per_dag=4,
+        max_active_tis_per_dag=1,
         if_exists='append',
         use_native_support=True,
     ).expand(input_file=unprocessed_files)
