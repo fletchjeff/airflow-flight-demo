@@ -51,7 +51,7 @@ services:
       - "host.docker.internal:host-gateway"
     restart: always
   streamlit:
-    image: fletchjeffastro/flight-streamlit:0.1.0
+    image: fletchjeffastro/flight-streamlit:0.1.1
     networks:
       - airflow
     ports:
