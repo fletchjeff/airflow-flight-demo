@@ -29,10 +29,12 @@ services:
     networks:
       - airflow
     ports:
-      - 5050:80
+      - 5050:8910
     environment:
     - PGADMIN_DEFAULT_EMAIL=name@example.com
     - PGADMIN_DEFAULT_PASSWORD=admin
+    - PGADMIN_LISTEN_ADDRESS=0.0.0.0
+    - PGADMIN_LISTEN_PORT=8910
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always
@@ -47,10 +49,22 @@ services:
       - 5000:5000
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    restart: always 
+    restart: always
+  streamlit:
+    image: fletchjeffastro/flight-streamlit:0.1.0
+    networks:
+      - airflow
+    ports:
+      - 8501:8501
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+    restart: always    
   webserver:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   triggerer:
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  scheduler:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"    

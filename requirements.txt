@@ -1,9 +1,9 @@
 boto3==1.26.76
-beautifulsoup4==4.11.2
-apache-airflow-providers-amazon==6.2.0
-apache-airflow-providers-google==8.11.0
-astro-sdk-python[amazon,google,postgres]==1.5.3
-minio==7.1.13
-xgboost==1.7.4
+beautifulsoup4==4.12.2
+apache-airflow-providers-amazon==8.1.0
+apache-airflow-providers-google==10.0.0
+astro-sdk-python[amazon,google,postgres]==1.6.1
+minio==7.1.15
+xgboost==1.7.6
 scikit-learn==1.2.2
-mlflow-skinny==2.2.2
+mlflow-skinny==2.4.1

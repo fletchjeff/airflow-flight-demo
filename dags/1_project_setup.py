@@ -12,7 +12,6 @@ import os
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
-#XCOM_BUCKET_NAME = os.environ["XCOM_BUCKET_NAME"]
 
 
 dag = DAG(

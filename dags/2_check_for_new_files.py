@@ -2,8 +2,10 @@ from airflow import DAG, Dataset
 from airflow.decorators import task
 import pendulum
 from datetime import datetime
+from airflow.providers.amazon.aws.hooks import s3
 import os 
 BUCKET_NAME = os.environ["BUCKET_NAME"]
+IS_PROD=os.environ["IS_PROD"]
 
 flight_data_dataset = Dataset(f's3://{BUCKET_NAME}/flight_data')
 
@@ -17,20 +19,29 @@ dag = DAG(
 with dag:
     @task
     def get_files_in_s3():
-        import boto3
-        conn = boto3.client('s3',
-            endpoint_url='http://host.docker.internal:9000',
-            aws_access_key_id='minioadmin',
-            aws_secret_access_key='minioadmin',
-            aws_session_token=None,
-            config=boto3.session.Config(signature_version='s3v4'),
-            verify=False
-        )
-        s3_list = []
-        if 'Contents' in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data'):
-            for key in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data')['Contents']:
-                if (len(key['Key'].split("/")) > 1) and ("On_Time_Reporting" in key['Key'].split("/")[1]):
-                    s3_list.append(key['Key'].split("/")[1].split(".")[0])
+        if IS_PROD=='True':
+            myhook = s3.S3Hook(aws_conn_id='my_aws_conn')
+            s3_list = myhook.list_keys(bucket_name=BUCKET_NAME,prefix='flight_data')
+            s3_list.remove('flight_data/')
+            for index,item in enumerate(s3_list):
+                s3_list[index]=item.split("/")[1].split(".")[0]
+        else:                
+            import boto3
+            conn = boto3.client('s3',
+                endpoint_url='http://host.docker.internal:9000',
+                aws_access_key_id='minioadmin',
+                aws_secret_access_key='minioadmin',
+                aws_session_token=None,
+                config=boto3.session.Config(signature_version='s3v4'),
+                verify=False
+            )
+
+            s3_list = []
+            
+            if 'Contents' in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data'):
+                for key in conn.list_objects_v2(Bucket=BUCKET_NAME,Prefix='flight_data')['Contents']:
+                    if (len(key['Key'].split("/")) > 1) and ("On_Time_Reporting" in key['Key'].split("/")[1]):
+                        s3_list.append(key['Key'].split("/")[1].split(".")[0])
         return s3_list
 
     @task
@@ -71,18 +82,23 @@ with dag:
                 if "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)" in info.filename:
                     file_bytes = zip.read(info.filename)
 
+        if IS_PROD=='True':
+            myhook = s3.S3Hook(aws_conn_id='my_aws_conn')
+            key = f'flight_data/{file_name.split(".zip")[0]}.csv'
+            myhook.load_bytes(bytes_data=file_bytes,bucket_name=BUCKET_NAME,key=key)
 
-        conn = boto3.client('s3',
-            endpoint_url='http://host.docker.internal:9000',
-            aws_access_key_id='minioadmin',
-            aws_secret_access_key='minioadmin',
-            aws_session_token=None,
-            config=boto3.session.Config(signature_version='s3v4'),
-            verify=False
-        )   
-
-        key = f'flight_data/{file_name.split(".zip")[0]}.csv'
-        conn.put_object(Body=file_bytes,Bucket=BUCKET_NAME,Key =key)
+        else:
+            conn = boto3.client('s3',
+                endpoint_url='http://host.docker.internal:9000',
+                aws_access_key_id='minioadmin',
+                aws_secret_access_key='minioadmin',
+                aws_session_token=None,
+                config=boto3.session.Config(signature_version='s3v4'),
+                verify=False
+            )
+            
+            key = f'flight_data/{file_name.split(".zip")[0]}.csv'
+            conn.put_object(Body=file_bytes,Bucket=BUCKET_NAME,Key=key)
 
         return file_name
 

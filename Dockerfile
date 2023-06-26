@@ -1,20 +1,21 @@
-# FROM quay.io/astronomer/astro-runtime:6.0.4
-FROM quay.io/astronomer/astro-runtime:7.4.1
+FROM quay.io/astronomer/astro-runtime:8.5.0
 
 # Local dev ENV
-ENV DB_CONN_ID="postgres_local" \
+ENV IS_PROD='False' \
+DB_CONN_ID="postgres_local" \
 FILE_CONN_ID="minio_local" \
 BUCKET_NAME="raw-flight-data" \
-MLFLOW_SERVER='host.docker.internal:5000'
-#XCOM_BUCKET_NAME="astro-xcom-backend" \
-#MLFLOW_SERVER='host.docker.internal:5000'
+MLFLOW_SERVER='http://host.docker.internal:5000'
 
-# ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://local-xcom'
-# ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='minio_local'
-# ENV AIRFLOW__CORE__XCOM_BACKEND='astro.custom_backend.astro_custom_backend.AstroCustomXcomBackend'
+# Astro dev ENV
+# ENV IS_PROD='True' \
+# DB_CONN_ID="my_postgres" \
+# FILE_CONN_ID="my_aws_conn" \
+# BUCKET_NAME="ce-ml-data" \
+# MLFLOW_SERVER='http://add2f2378d8604988b8bd8fdcb5afa93-609300651.us-east-1.elb.amazonaws.com:5000'
+
+
 ENV AIRFLOW__CORE__ALLOWED_DESERIALIZATION_CLASSES='airflow\.* astro\.*'
-
-# ENV AIRFLOW__ASTRO_SDK__AUTO_ADD_INLETS_OUTLETS = "false"
 
 ENV AIRFLOW_CONN_MINIO_LOCAL='{\
     "conn_type": "aws",\
@@ -37,4 +38,3 @@ ENV AIRFLOW_CONN_POSTGRES_LOCAL='{\
     "schema": "",\
     "extra": ""\
   }'
-

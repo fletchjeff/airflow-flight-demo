@@ -23,6 +23,7 @@ import os
 DB_CONN_ID = os.environ["DB_CONN_ID"]
 FILE_CONN_ID = os.environ["FILE_CONN_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
+MLFLOW_SERVER=os.environ["MLFLOW_SERVER"]
 
 #datasets
 model_training_data_latest_dataset =  Dataset('postgresql://host.docker.internal/postgres/tmp_astro.model_training_data_latest')  
@@ -77,7 +78,7 @@ with dag:
 
         bucketname = BUCKET_NAME
 
-        mlflow.set_tracking_uri("http://host.docker.internal:5000")
+        mlflow.set_tracking_uri(MLFLOW_SERVER)
         mlflow.set_experiment("train_model")
         with mlflow.start_run(run_name=model_directory) as run:
             mlflow.log_param("model_directory",model_directory)
@@ -146,7 +147,7 @@ with dag:
             aws_secret_access_key='minioadmin',
         )
 
-        mlflow.set_tracking_uri("http://host.docker.internal:5000")
+        mlflow.set_tracking_uri(MLFLOW_SERVER)
         mlflow.set_experiment("train_model")
         model_path = mlflow.get_run(run_id=run_id).data.params['model_directory']
         bucketname = BUCKET_NAME
